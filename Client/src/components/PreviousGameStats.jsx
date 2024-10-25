@@ -55,7 +55,7 @@ const PreviousGameStats = () => {
     return (
         <div className="game-stats">
              <h2>Recent Games</h2>
-             {data && data.length === 0 ? (
+             {data == null ? (
                 <h2>No Previous Game results found</h2>
              ): (
                 <table>
@@ -68,7 +68,7 @@ const PreviousGameStats = () => {
                     </tr>
                  </thead>
                     <tbody>
-                       {data.map(item => {
+                       {data?.map(item => {
                         return (
                             <tr>
                                 <td>{item.opponent}</td>
