@@ -55,7 +55,7 @@ const PreviousGameStats = () => {
     return (
         <div className="game-stats">
              <h2>Recent Games</h2>
-             {data.length === 0 ? (
+             {data && data.length === 0 ? (
                 <h2>No Previous Game results found</h2>
              ): (
                 <table>
