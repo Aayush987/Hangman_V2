@@ -11,7 +11,8 @@ export const useSocket = () => {
 const SocketProvider = ({children}) => {
 
     const socket = useMemo(() => 
-        io("localhost:3000")
+        // io("localhost:3000")
+        io("https://hangman-v2.onrender.com/")
     ,[]);
 
     return (
