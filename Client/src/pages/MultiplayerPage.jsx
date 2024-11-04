@@ -18,6 +18,7 @@ const MultiplayerPage = () => {
     const [roomId, setRoomId] = useState('');
     const [roomfullError, setRoomfullError] = useState(false);
     const [isJoining, setIsJoining] = useState(false);
+    const [formError, setFormError] = useState('');
     // const [messages, setMessages] = useState([]);
 
    
@@ -25,9 +26,14 @@ const MultiplayerPage = () => {
     const handleCreateRoomId = () => {
          const newRoomId = uuid();
          setRoomId(newRoomId);
+         setFormError('');
     }
 
     const handleJoinRoomId = () => {
+        if (!name || !roomId) {
+            setFormError("Name and Room ID cannot be empty.");
+            return;
+        }
         setIsJoining(true);
         setRoomfullError(false);
         
@@ -116,6 +122,7 @@ const MultiplayerPage = () => {
             <button className="cta-button" onClick={handleCreateRoomId}>Create Room</button>
             <button className="cta-button" onClick={handleJoinRoomId}>Join Room</button>   
             {roomfullError && <p className="error-message">Room is full</p>}
+            {formError && <p className="error-message">{formError}</p>}
         </div>
     );
 }

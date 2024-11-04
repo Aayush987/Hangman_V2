@@ -8,6 +8,8 @@
     import ScoreModal from "./ScoreModal";
     import { db } from "../utils/firebase";
     import { addDoc, setDoc, doc, arrayUnion } from 'firebase/firestore';
+    import useSound from "use-sound";
+    import mergedaudiofile from "../data/sounds/mergedaudioFile.mp3";
 
     const GameContainer = () => {
         const {Username,email} = useUserContext();
@@ -28,6 +30,18 @@
         const [isWinner, setIsWinner] = useState(false);
         const [isLoser, setIsLoser] = useState(false);
         const [isModalOpen, setIsModalOpen] = useState(false);
+        const [waitingForPlayers, setWaitingForPlayers] = useState(true);
+        const gameEndedAbruptly = useRef(false);
+
+        const [play] = useSound(mergedaudiofile, {
+            sprite: {
+                clock: [0,2000],
+                game_over: [8000,1000],
+                win:   [9200, 1000],
+                lose: [ 11700, 2000],
+                click: [12800, 100]
+            }
+        });
 
         const resetRound = useCallback(() => {
             setIsWinner(false);
@@ -76,6 +90,7 @@
 
             const gameStart = useCallback(() => {
                 setGameActive(true);
+                setWaitingForPlayers(false);
                 console.log("Game Started");
                     resetRound();
             }, [resetRound]);      
@@ -100,17 +115,30 @@
                 setIsModalOpen(true);
                 console.log("Game Over");
                 socket.emit('game-over', { score });
+                play({id: 'game_over'});
                
-               await addGameInfo();
-            console.log(Username, "game over");
-            }, [gameActive]);
+                if(!gameEndedAbruptly.current) {
+                    console.log("Value",gameEndedAbruptly.current);
+                    console.log("it has run");
+                    await addGameInfo();
+                    console.log(Username, "game over");
+                }
+            }, [gameActive, gameEndedAbruptly]);
 
             const addGameInfo = useCallback(async () => {
                 try {
+                    let result;
+                    if(scoreRef.current > opponentScoreRef.current) {
+                        result = 'Won';
+                    }else if(scoreRef.current < opponentScoreRef.current) {
+                        result = 'Lose';
+                    }else {
+                        result = 'Tie';
+                    }
                     await setDoc(doc(db, "Users", email), {
                     games: arrayUnion({
                             opponent: opponentName.current, // Replace with actual opponent name if available
-                            result: scoreRef.current > opponentScoreRef.current ? 'Won' : 'Lose',
+                            result: result,
                             score: scoreRef.current,
                             timestamp: new Date().toISOString()
                         })
@@ -190,10 +218,14 @@
             if (!gameActive) return;
             const handleTimerUpdate = ({timer}) => {
                 setTimer(timer);
+                play({id: 'clock'});
                 console.log("Timer:", timer);
             }
             socket.on('timerUpdate', handleTimerUpdate);
-            socket.on('gameOver', ({message}) => {
+            socket.on('gameOver', endGame);
+            socket.on('userDisconnect', ({message}) => {
+                alert(message);
+                gameEndedAbruptly.current = true;
                 endGame();
             });
 
@@ -210,9 +242,11 @@
             
             if(incorrectLetters.length >= 6) {
                 setIsLoser(true);
+                play({id: 'lose'});
             }
             if(word.split("").every(letter => guessedLetter.includes(letter))) {
                 setIsWinner(true);
+                play({id: 'win'});
             }
 
 
@@ -280,10 +314,12 @@
         useEffect(() =>{
             const handler = (e) => {
             const key = e.key
-        
-        if (!key.match(/^[a-z]$/)) return
+            
+        if(!gameActive) return;
+        if (!key.match(/^[a-z]$/)) return;
         
         e.preventDefault()
+        play({id: 'click'});
         addGuessedLetter(key);
         socket.emit('keyPressed', {name: Username ,keyPress: key});
         }
@@ -329,6 +365,7 @@
     }, [socket]);
     return (
         <div className = "container">
+            {waitingForPlayers && <h3>Waiting for players to join to start the game...</h3>}
             <div className = "timer">Time: {timer}</div>
             <div className = "game-area">
                 <div className="player-section">
@@ -337,7 +374,7 @@
                     <div className="clue">Clue: {sentence}</div>
                     <HangmanDrawing numberOfGuesses = {incorrectLetters.length} />
                     <HangmanWord word = {word} reveal = {isLoser} guessedLetters = {guessedLetter} />
-                     <Keyboard disabled = {isWinner || isLoser} activeLetter={guessedLetter.filter(letter => word.includes(letter))}
+                     <Keyboard disabled = {!gameActive || isWinner || isLoser} activeLetter={guessedLetter.filter(letter => word.includes(letter))}
                      inactiveLetters={incorrectLetters} addGuessedLetter={addGuessedLetter} 
                      />
                 </div>
