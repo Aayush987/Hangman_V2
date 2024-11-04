@@ -2,6 +2,7 @@
 import { ClerkProvider } from "@clerk/clerk-react";
 import {createContext, useState, useContext } from "react";
 import { useUser } from "@clerk/clerk-react";
+import { neobrutalism, shadesOfPurple, dark } from "@clerk/themes";
 
 
 const UserContext = createContext();
@@ -12,7 +13,12 @@ if (!key) {
   throw new Error("Missing Publishable Key")
 }
     return (
-        <ClerkProvider publishableKey={key}>
+        <ClerkProvider
+            appearance={{
+            baseTheme: dark,
+            signIn: { baseTheme: neobrutalism },
+          }}
+         publishableKey={key}>
                 <UserContextWrapper>
                     {children};
                 </UserContextWrapper>

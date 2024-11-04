@@ -24,7 +24,9 @@ const Layout = () => {
                         <circle cx="12" cy="7" r="4" />
                     </svg>
                     <SignedOut>
-                        <SignInButton />
+                        <SignInButton>
+                            <button className="cta-button-small">Sign In</button>
+                        </SignInButton>
                     </SignedOut>
                     <SignedIn>
                         <UserButton />

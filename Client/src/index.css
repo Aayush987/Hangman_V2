@@ -93,6 +93,27 @@ h1 {
   color: red;
 }
 
+.cta-button-small {
+  display: block;
+  width: 80px;
+  margin: 0 auto;
+  padding: .5rem;
+  background-color: #333;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: .8rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all .2s ease;
+}
+
+.cta-button-small:hover {
+  background-color: #f0f0f0;
+  color: black;
+  border: 2px solid #333;
+}
 .cta-button {
   display: block;
   width: 200px;
@@ -381,6 +402,10 @@ h1 {
 
 .loser {
   color: #F44336;
+}
+
+.tie {
+  color: gray;
 }
 
 .modal-title {

@@ -18,6 +18,14 @@ io.on('connection', (socket) => {
             if (index !== -1) {
             users.splice(index, 1);
             }
+            const room = findRoomBySocketId(socket.id);
+            if(room) {
+                const user = room.users.find(user =>user.socketId === socket.id);
+                if (user) {
+                    // Notify remaining players that the user has disconnected
+                    io.to(room.Id).emit('userDisconnect', { message: `${user.name} has disconnected. The game has ended.` });
+                }
+            }
             removeUserFromRoom(socket.id);
             console.log("Number of users connected:", users.length);
     })

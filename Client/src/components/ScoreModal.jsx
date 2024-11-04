@@ -8,7 +8,9 @@ const ScoreModal = ({user,isOpen, player1score, player2score, player2name}) => {
 
     if(!isOpen) return null;
 
-    const playerwon = player1score > player2score ;
+    const playerwon = player1score > player2score;
+    const playerLost = player1score < player2score;
+    const isTie = player1score === player2score;
     const navigate = useNavigate();
 
     const onClose = () => {
@@ -19,12 +21,14 @@ const ScoreModal = ({user,isOpen, player1score, player2score, player2name}) => {
         <div className="model-container"> 
               <div className="modal-content">
                 <div className="modal-header">
-                <h2 className={playerwon ? "winner" : "loser"}>
-                    {playerwon ? (
-                        <>You Win! <span className="icon-trophy"><Trophy /></span></>
-                    ): (
-                        <>You Lost! <span className="icon-frown"><Frown /></span></>
-                    )}
+                <h2 className={playerwon ? "winner" : playerLost ? "loser" : "tie"}>
+                    {isTie ? (
+                            <>It's a Tie! <span className="icon-frown"><Frown /></span></>
+                        ) : playerwon ? (
+                            <>You Win! <span className="icon-trophy"><Trophy /></span></>
+                        ) : (
+                            <>You Lost! <span className="icon-frown"><Frown /></span></>
+                        )}
                 </h2>
                  <p className="modal-description">Here's how you and your opponent scored</p>
                 </div>

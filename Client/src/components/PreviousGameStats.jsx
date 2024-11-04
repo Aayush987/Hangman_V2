@@ -72,7 +72,10 @@ const PreviousGameStats = () => {
                         return (
                             <tr>
                                 <td>{item.opponent}</td>
-                                <td className= {item.result === 'Won' ? 'win' : 'lose'}>{item.result}</td>
+                                <td className= {item.result === 'Won' ? 'win' : 
+                                    item.result === 'Lose' ? 'lose' : 
+                                    item.result === 'Tie' ? 'tie' : ''
+                                }>{item.result}</td>
                                 <td>{item.score}</td>
                                 <td>{formatTimestamp(item.timestamp)}</td>
                             </tr>
