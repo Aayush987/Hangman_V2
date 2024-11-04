@@ -9,7 +9,7 @@
     import { db } from "../utils/firebase";
     import { addDoc, setDoc, doc, arrayUnion } from 'firebase/firestore';
     import useSound from "use-sound";
-    import mergedaudiofile from "../data/sounds/mergedaudioFile.mp3";
+    import mergedaudioFile from "../data/sounds/mergedaudioFile.mp3";
 
     const GameContainer = () => {
         const {Username,email} = useUserContext();
@@ -33,7 +33,7 @@
         const [waitingForPlayers, setWaitingForPlayers] = useState(true);
         const gameEndedAbruptly = useRef(false);
 
-        const [play] = useSound(mergedaudiofile, {
+        const [play] = useSound(mergedaudioFile, {
             sprite: {
                 clock: [0,2000],
                 game_over: [8000,1000],
