@@ -114,8 +114,10 @@
                 }
                 setIsModalOpen(true);
                 console.log("Game Over");
+                // if(isModalOpen) {
+                //     play({id: 'game_over'});
+                // }
                 socket.emit('game-over', { score });
-                play({id: 'game_over'});
                
                 if(!gameEndedAbruptly.current) {
                     console.log("Value",gameEndedAbruptly.current);
@@ -150,26 +152,6 @@
                     console.error("Error adding game info: ", error);
                 }
             }, [email, isWinner,isLoser, score]);
-
-        // // const gameStart = () => {
-        //     setGameActive(true);
-        //     console.log("Game Started");
-        //     setIsLoser(false);
-        //     setIsWinner(false);
-        //     setGuessedLetter([]);
-        //     getRandomWordAndSentence();
-
-        //     setTimer(30);
-        //     // socket.emit('game-details', {
-        //     //     word: word,
-        //     //     sentence: sentence,
-        //     //     timer: timer
-        //     // })
-        // }
-        // const handleTimer = ({timer}) => {
-        //     setTimer(timer);
-        //     console.log("oppTimer:", timer);
-        // }
 
         const handleOpponent = ({word, sentence,timer}) => {
             setOpponentWord(word);
@@ -215,10 +197,19 @@
         }, [socket]);
 
         useEffect(() => {
+            play({id: 'clock'});
+        },[timer]);
+
+        useEffect(() => {
+            play({id: 'game_over'});
+        },[isModalOpen]);
+
+        useEffect(() => {
             if (!gameActive) return;
+          
             const handleTimerUpdate = ({timer}) => {
                 setTimer(timer);
-                play({id: 'clock'});
+                // play({id: 'clock'});
                 console.log("Timer:", timer);
             }
             socket.on('timerUpdate', handleTimerUpdate);
